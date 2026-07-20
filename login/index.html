@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A premium secure gateway with dynamic forgot password recovery and interactive user dashboard simulation.">
+    <title>Secure Portal - Login & Recovery</title>
+    <!-- Google Fonts: Outfit for Headings, Inter for Body -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Background Glows -->
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" aria-live="polite"></div>
+
+    <main class="app-card-container">
+        <!-- 1. LOGIN CARD -->
+        <section id="login-section" class="card-section">
+            <header class="card-header">
+                <div class="logo-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                </div>
+                <h1 class="card-title">Welcome back</h1>
+                <p class="card-subtitle">Enter your credentials to access your account</p>
+            </header>
+
+            <form id="login-form" class="auth-form" method="POST" novalidate>
+                <div class="form-group">
+                    <label for="login-email">Email Address</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                <polyline points="22,6 12,13 2,6"></polyline>
+                            </svg>
+                        </span>
+                        <input 
+                            type="email" 
+                            id="login-email" 
+                            name="email" 
+                            autocomplete="username" 
+                            placeholder="name@example.com" 
+                            required
+                        >
+                    </div>
+                    <span class="error-message" id="login-email-error" aria-live="polite"></span>
+                </div>
+
+                <div class="form-group">
+                    <div class="label-row">
+                        <label for="login-password">Password</label>
+                        <button type="button" id="trigger-forgot" class="text-link">Forgot password?</button>
+                    </div>
+                    <div class="input-wrapper">
+                        <span class="input-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                        </span>
+                        <input 
+                            type="password" 
+                            id="login-password" 
+                            name="password" 
+                            autocomplete="current-password" 
+                            placeholder="••••••••" 
+                            required
+                        >
+                        <button type="button" id="toggle-login-password" class="password-toggle" aria-label="Show password" aria-pressed="false">
+                            <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
+                    <span class="error-message" id="login-password-error" aria-live="polite"></span>
+                </div>
+
+                <button type="submit" class="submit-btn" id="login-submit-btn">
+                    <span>Sign In</span>
+                    <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </button>
+            </form>
+        </section>
+
+        <!-- 2. FORGOT PASSWORD CARD -->
+        <section id="forgot-section" class="card-section hidden">
+            <header class="card-header">
+                <button type="button" id="back-to-login-btn" class="back-btn" aria-label="Back to login">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                </button>
+                <div class="logo-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
+                    </svg>
+                </div>
+                <h1 class="card-title" id="forgot-title">Forgot Password?</h1>
+                <p class="card-subtitle" id="forgot-subtitle">Enter your email address to receive a verification code</p>
+            </header>
+
+            <!-- Forgot Step 1: Send Code -->
+            <form id="forgot-email-form" class="auth-form" method="POST" novalidate>
+                <div class="form-group">
+                    <label for="forgot-email">Email Address</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                <polyline points="22,6 12,13 2,6"></polyline>
+                            </svg>
+                        </span>
+                        <input 
+                            type="email" 
+                            id="forgot-email" 
+                            name="email" 
+                            placeholder="name@example.com" 
+                            required
+                        >
+                    </div>
+                    <span class="error-message" id="forgot-email-error" aria-live="polite"></span>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <span>Send Verification Code</span>
+                    <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </button>
+            </form>
+
+            <!-- Forgot Step 2: Verification & Reset -->
+            <form id="forgot-reset-form" class="auth-form hidden" method="POST" novalidate>
+                <div class="form-group">
+                    <label for="reset-code">Verification Code</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+                                <path d="M12 6v6l4 2"></path>
+                            </svg>
+                        </span>
+                        <input 
+                            type="text" 
+                            id="reset-code" 
+                            name="code" 
+                            placeholder="123456" 
+                            inputmode="numeric" 
+                            pattern="\d{6}" 
+                            maxlength="6" 
+                            required
+                        >
+                    </div>
+                    <span class="error-message" id="reset-code-error" aria-live="polite"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="reset-password">New Password</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                        </span>
+                        <input 
+                            type="password" 
+                            id="reset-password" 
+                            name="new-password" 
+                            autocomplete="new-password" 
+                            placeholder="Minimum 8 characters" 
+                            minlength="8" 
+                            required
+                        >
+                        <button type="button" id="toggle-reset-password" class="password-toggle" aria-label="Show password" aria-pressed="false">
+                            <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
+                    <span class="error-message" id="reset-password-error" aria-live="polite"></span>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <span>Update Password</span>
+                    <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </button>
+            </form>
+        </section>
+
+        <!-- 3. DASHBOARD CARD (LOGGED IN) -->
+        <section id="dashboard-section" class="card-section hidden">
+            <header class="card-header dashboard-header">
+                <div class="user-avatar" id="dashboard-avatar">U</div>
+                <h1 class="card-title" id="dashboard-title">Welcome</h1>
+                <p class="card-subtitle" id="dashboard-subtitle">Logged in successfully</p>
+            </header>
+
+            <div class="dashboard-content">
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <span class="metric-label">Account Status</span>
+                        <span class="metric-value status-active">Active</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Security Tier</span>
+                        <span class="metric-value">Level 2</span>
+                    </div>
+                </div>
+
+                <div class="session-info">
+                    <h3>Session Details</h3>
+                    <p>Last login: <span id="session-time">Just now</span></p>
+                    <p>Email: <span id="session-email"></span></p>
+                </div>
+
+                <button type="button" id="logout-btn" class="logout-btn">
+                    <span>Log Out</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>Built with native web standards. Simulated Secure Authentication.</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
